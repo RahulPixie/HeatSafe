@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background: #000080;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #990000;
+        }
+        code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        .code-example {
+            background: #362f2f; /* Latar belakang gelap */
+            color: #f8f8f2; /* Warna teks terang */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+        }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        pre code {
+            background: none; /* Menghapus latar belakang pada elemen <code> */
+            color: inherit; /* Mengatur warna teks agar mewarisi dari <pre> */
+        }
+        .endpoint {
+            margin-bottom: 20px;
+        }
+        .method {
+            font-weight: bold;
+            color: #0073e6;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #0073e6;
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .back-to-index {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 10px 20px;
+            background: #0073e6;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .back-to-index:hover {
+            background: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ESP32 API Documentation</h1>
+        <p>Comprehensive guide to integrate ESP32 with our REST API</p>
+        <a href="index.html" class="back-to-index">Back to Home</a>
+    </header>
+    <div class="container">
+        <h2>Introduction</h2>
+        <p>This API allows your ESP32 to send and receive data. Below, you will find the details of available endpoints, request formats, and response structures.</p>
+
+        <h2>Base URL</h2>
+        <p>The base URL for all API endpoints is:</p>
+        <code>http://your-server-address/api</code>
+
+        <h2>Endpoints</h2>
+
+        <div class="endpoint">
+            <h3>1. Send Data</h3>
+            <p><span class="method">POST</span> <code>/data</code></p>
+            <p>Use this endpoint to send sensor data from ESP32 to the server.</p>
+            <h4>Request Format:</h4>
+            <pre class="code-example">{
+    "device_id": "esp32-001",
+    "temperature": 25.3,
+    "humidity": 60.2,
+    "gas_smoke": 0.05
+}</pre>
+            <h4>Response Example:</h4>
+            <pre class="code-example">{
+    "status": "success",
+    "message": "Data received successfully"
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <h3>2. Retrieve Data</h3>
+            <p><span class="method">GET</span> <code>/data/:device_id</code></p>
+            <p>Use this endpoint to fetch the latest data for a specific device.</p>
+            <h4>URL Parameters:</h4>
+            <ul>
+                <li><code>device_id</code>: The unique ID of the ESP32 device.</li>
+            </ul>
+            <h4>Response Example:</h4>
+            <pre class="code-example">{
+    "device_id": "esp32-001",
+    "temperature": 25.3,
+    "humidity": 60.2,
+    "gas_smoke": 0.05,
+    "timestamp": "2024-12-04T12:34:56Z"
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <h3>3. Health Check</h3>
+            <p><span class="method">GET</span> <code>/health</code></p>
+            <p>Check if the API is running and accessible.</p>
+            <h4>Response Example:</h4>
+            <pre class="code-example">{
+    "status": "ok",
+    "message": "API is running"
+}</pre>
+        </div>
+
+        <h2>Authentication</h2>
+        <p>Currently, no authentication is required to access these endpoints.</p>
+
+        <h2>Error Handling</h2>
+        <p>In case of errors, the API will return the following format:</p>
+        <pre class="code-example">{
+    "status": "error",
+    "message": "Detailed error message"
+}</pre>
+
+        <h2>Examples with ESP32</h2>
+        <p>Below is an example code snippet to send data from ESP32 using Arduino IDE:</p>
+        <pre class="code-example"><code>const char* server = "http://your-server-address/api/data";
+
+void sendData(float temperature, float humidity, float gasSmoke) {
+    WiFiClient client;
+    HTTPClient http;
+    http.begin(client, server);
+    http.addHeader("Content-Type", "application/json");
+
+    String payload = "{";
+    payload += "\"device_id\": \"esp32-001\", ";
+    payload += "\"temperature\": " + String(temperature) + ", ";
+    payload += "\"humidity\": " + String(humidity) + ", ";
+    payload += "\"gas_smoke\": " + String(gasSmoke);
+    payload += "}";
+
+    int httpResponseCode = http.POST(payload);
+
+    if (httpResponseCode > 0) {
+        Serial.println(http.getString());
+    } else {
+        Serial.println("Error sending data");
+    }
+
+    http.end();
+}</code></pre>
+    </div>
+    <footer>
+        <p>ESP32 API Documentation &copy; 2024</p>
+    </footer>
+</body>
+</html>
